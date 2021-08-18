@@ -40,21 +40,67 @@ export class AboutComponent {
         return newData;
     }
 
+    onReadDoc() {
+        // 単発
+        // this.db.doc("/courses/3me0YWzRAnNDt2aT0tav").get().subscribe(snap => {
+        //     console.log(snap.id);
+        //     console.log(snap.data());
+        // });
+
+        // 監視
+        // this.db.doc("/courses/3me0YWzRAnNDt2aT0tav").snapshotChanges()
+        // .subscribe(snap => {
+        //     console.log(snap.payload.id);
+        //     console.log(snap.payload.data());
+        // });
+        // or
+        this.db.doc("/courses/3me0YWzRAnNDt2aT0tav").valueChanges()
+        .subscribe(course => {
+            console.log(course);
+        });
+
+
+    }
+
+    onReadCollection() {
+        // ネストしたコレクションに対してのクエリ
+        // this.db.collection(
+        //     "/courses/6PoZVGrZyUL4raxwkwDp/lessons",
+        //     ref => ref.where("seqNo", "<=", 5).orderBy("seqNo")
+
+        // 異なるフィールドの範囲指定はエラー
+        // this.db.collection(
+        //     "/courses",
+        //     ref => ref.where("seqNo", "<=", 5)
+        //     .where("lessonsCount", "<=", 10)
+        //     .orderBy("seqNo")
+
+        // 複合インデックスの作成の必要あり
+        this.db.collection(
+            "/courses",
+            ref => ref.where("seqNo", "<=", 20)
+            .where("url", "==", "angular-forms-course")
+            .orderBy("seqNo")
+        ).get().subscribe(snaps => {
+            snaps.forEach(snap => {
+                console.log(snap.id);
+                console.log(snap.data());
+            })
+        })
+    }
+
+    onReadCollectionGroup() {
+        // コレクショングループ用のインデックスが必要
+        this.db.collectionGroup(
+            "lessons",
+            ref => ref.where("seqNo", "==", 1))
+            .get()
+            .subscribe(snaps => {
+                snaps.forEach(snap => {
+                    console.log(snap.id);
+                    console.log(snap.data());
+                })
+            })
+    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
